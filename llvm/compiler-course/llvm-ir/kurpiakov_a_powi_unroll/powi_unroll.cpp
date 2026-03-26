@@ -1,4 +1,5 @@
 #include "llvm/ADT/STLExtras.h"
+#include "llvm/Support/Casting.h"
 #include "llvm/IR/Constants.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/IRBuilder.h"
@@ -17,14 +18,14 @@ struct PowiUnrollPass : llvm::PassInfoMixin<PowiUnrollPass> {
     for (auto &f : func) {
       for (llvm::Instruction &I : llvm::make_early_inc_range(f)) {
 
-        auto *intrin = dyn_cast<llvm::IntrinsicInst>(&I);
+        auto *intrin = llvm::dyn_cast<llvm::IntrinsicInst>(&I);
         if (!intrin || intrin->getIntrinsicID() != llvm::Intrinsic::powi)
           continue;
 
         llvm::Value *base = intrin->getArgOperand(0);
         llvm::Value *deg = intrin->getArgOperand(1);
 
-        auto *C = dyn_cast<llvm::ConstantInt>(deg);
+        auto *C = llvm::dyn_cast<llvm::ConstantInt>(deg);
         if (!C)
           continue;
 
