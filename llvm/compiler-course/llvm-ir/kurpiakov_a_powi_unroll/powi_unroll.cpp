@@ -1,5 +1,4 @@
 #include "llvm/ADT/STLExtras.h"
-#include "llvm/Support/Casting.h"
 #include "llvm/IR/Constants.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/IRBuilder.h"
@@ -7,6 +6,7 @@
 #include "llvm/IR/IntrinsicInst.h"
 #include "llvm/Passes/PassBuilder.h"
 #include "llvm/Passes/PassPlugin.h"
+#include "llvm/Support/Casting.h"
 #include "llvm/Support/raw_ostream.h"
 
 namespace {
