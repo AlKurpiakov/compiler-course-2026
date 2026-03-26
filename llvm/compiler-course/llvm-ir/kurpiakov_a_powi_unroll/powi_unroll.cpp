@@ -1,13 +1,12 @@
+#include "llvm/ADT/STLExtras.h"
+#include "llvm/IR/Constants.h"
 #include "llvm/IR/Function.h"
+#include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/Instructions.h"
 #include "llvm/IR/IntrinsicInst.h"
-#include "llvm/IR/IRBuilder.h"
-#include "llvm/IR/Constants.h"
 #include "llvm/Passes/PassBuilder.h"
 #include "llvm/Passes/PassPlugin.h"
 #include "llvm/Support/raw_ostream.h"
-#include "llvm/ADT/STLExtras.h"
-
 
 namespace {
 struct PowiUnrollPass : llvm::PassInfoMixin<PowiUnrollPass> {
@@ -17,13 +16,13 @@ struct PowiUnrollPass : llvm::PassInfoMixin<PowiUnrollPass> {
 
     for (auto &f : func) {
       for (llvm::Instruction &I : llvm::make_early_inc_range(f)) {
-        
+
         auto *intrin = dyn_cast<llvm::IntrinsicInst>(&I);
         if (!intrin || intrin->getIntrinsicID() != llvm::Intrinsic::powi)
           continue;
 
         llvm::Value *base = intrin->getArgOperand(0);
-        llvm::Value *deg  = intrin->getArgOperand(1);
+        llvm::Value *deg = intrin->getArgOperand(1);
 
         auto *C = dyn_cast<llvm::ConstantInt>(deg);
         if (!C)
@@ -35,33 +34,33 @@ struct PowiUnrollPass : llvm::PassInfoMixin<PowiUnrollPass> {
 
         llvm::IRBuilder<> builder(intrin);
         builder.setFastMathFlags(intrin->getFastMathFlags());
-        
+
         llvm::Value *result = nullptr;
 
         switch (e) {
-          case 0:
-            result = llvm::ConstantFP::get(base->getType(), 1.0);
-            break;
+        case 0:
+          result = llvm::ConstantFP::get(base->getType(), 1.0);
+          break;
 
-          case 1:
-            result = base;
-            break;
+        case 1:
+          result = base;
+          break;
 
-          case 2:
-            result = builder.CreateFMul(base, base);
-            break;
+        case 2:
+          result = builder.CreateFMul(base, base);
+          break;
 
-          case 3: {
-            auto *Mul1 = builder.CreateFMul(base, base);
-            result = builder.CreateFMul(Mul1, base);
-            break;
-          }
+        case 3: {
+          auto *Mul1 = builder.CreateFMul(base, base);
+          result = builder.CreateFMul(Mul1, base);
+          break;
+        }
 
-          case 4: {
-            auto *Mul1 = builder.CreateFMul(base, base);
-            result = builder.CreateFMul(Mul1, Mul1);
-            break;
-          }
+        case 4: {
+          auto *Mul1 = builder.CreateFMul(base, base);
+          result = builder.CreateFMul(Mul1, Mul1);
+          break;
+        }
         }
 
         if (result) {
