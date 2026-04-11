@@ -49,7 +49,7 @@ static bool IsTwoOp(const MachineInstr &MI) {
 }
 
 static bool IsMergeable(const MachineInstr &Head,
-                                const MachineInstr &Candidate) {
+                        const MachineInstr &Candidate) {
   if (Head.getOpcode() != Candidate.getOpcode())
     return false;
   if (!IsTwoOp(Head) || !IsTwoOp(Candidate))
@@ -105,5 +105,5 @@ bool IncDecChanger::runOnMachineFunction(MachineFunction &MF) {
 }
 } // namespace
 
-static RegisterPass<IncDecChanger> X("incdec-changer-x86", "description pass", false,
-                                   false);
+static RegisterPass<IncDecChanger> X("incdec-changer-x86", "description pass", 
+                                     false, false);
