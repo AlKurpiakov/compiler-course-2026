@@ -105,5 +105,6 @@ bool IncDecChanger::runOnMachineFunction(MachineFunction &MF) {
 }
 } // namespace
 
+
 static RegisterPass<IncDecChanger> X("incdec-changer-x86", "description pass", 
                                      false, false);
